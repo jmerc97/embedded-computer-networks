@@ -23,8 +23,8 @@
 #include "serial.h"
 
 // map the led to GPIO PA8 and the potentiometer to PA0
-gpio_pin_t led = {PI_1, GPIOI, GPIO_PIN_1};
-gpio_pin_t pot = {PF_8, GPIOF, GPIO_PIN_8};
+gpio_pin_t pinLed = {PI_1, GPIOI, GPIO_PIN_1};
+gpio_pin_t pinPot = {PA_0, GPIOA, GPIO_PIN_0};
 
 // declare our utility functions
 void configure_gpio(void);
@@ -39,21 +39,21 @@ int main()
   
   // initialise the uart, adc and gpio pins
   init_uart(9600);
-  init_adc(pot);
-  init_gpio(led, OUTPUT);
+  init_adc(pinPot);
+  init_gpio(pinLed, OUTPUT);
   
   // print an initial status message
-  printf("we are alive!\r\n");
+  printf("We are alive!\r\n");
   
   // loop forever ...
   while(1)
   {
     // toggle the led pin
-    toggle_gpio(led);
+    toggle_gpio(pinLed);
     
     // read the potentiometer and echo that value to the terminal
-    uint16_t adc_val = read_adc(pot);
-    printf("potentiometer value = %d : delay time = %d ms\r\n", 
+    uint16_t adc_val = read_adc(pinPot);
+    printf("Potentiometer value = %d : Delay time = %d ms\r\n", 
       adc_val, (adc_val/2));
     
     // delay for the appropriate time

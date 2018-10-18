@@ -21,7 +21,7 @@
 // map the led to GPIO PI_1 (the inbuilt led) and the push button to PI_11 
 // (the user button)
 gpio_pin_t ledPin = {PI_1, GPIOI, GPIO_PIN_1};
-gpio_pin_t pushButtonPin = {PA_8, GPIOI, GPIO_PIN_8};
+gpio_pin_t pushButtonPin = {PA_8, GPIOA, GPIO_PIN_8};
 
 // this is the main method
 int main()
