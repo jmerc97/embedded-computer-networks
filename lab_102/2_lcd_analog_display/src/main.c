@@ -72,28 +72,53 @@ int main()
   {
     
 		uint16_t adc_val = read_adc(pinPot);
-		adc_val = adc_val / 4094.00 * 100 + 1;
 		
-		char str[12];
-		sprintf(str, "ADC = %4d", adc_val);
-		BSP_LCD_DisplayStringAtLine(6, (uint8_t *)str);
+		uint16_t xpos = 0;
+		uint16_t ypos = 240;
+		uint16_t height = 12;
+		uint16_t barLength;
+		
+		adc_val = adc_val / 4095.00 * 100;
+		
+		barLength = adc_val * 480 / 100;
+		
+		char adc[12];
+		char half[16];
+		char full[16];
+		sprintf(adc, "ADC = %4d", adc_val);
+		BSP_LCD_DisplayStringAtLine(5, (uint8_t *)adc);
+		
 		
 		if (adc_val < 50)
 		{
 			write_gpio(ledHalf, HIGH);
 			write_gpio(ledFull, LOW);
+			sprintf(half, "LED 1 is high");
+			sprintf(full, "LED 2 is low ");
+			BSP_LCD_DisplayStringAtLine(7, (uint8_t *)half);
+			BSP_LCD_DisplayStringAtLine(8, (uint8_t *)full);
 		}
 		else if (adc_val > 50)
 		{
 			write_gpio(ledFull, HIGH);
 			write_gpio(ledHalf, LOW);
+			sprintf(half, "LED 1 is low ");
+			sprintf(full, "LED 2 is high");
+			BSP_LCD_DisplayStringAtLine(7, (uint8_t *)half);
+			BSP_LCD_DisplayStringAtLine(8, (uint8_t *)full);
 		}
 		else if (adc_val == 50)
 		{
 			write_gpio(ledHalf, HIGH);
 			write_gpio(ledFull, HIGH);
+			sprintf(half, "LED 1 is high");
+			sprintf(full, "LED 2 is high");
+			BSP_LCD_DisplayStringAtLine(7, (uint8_t *)half);
+			BSP_LCD_DisplayStringAtLine(8, (uint8_t *)full);
 		}
 		
-		HAL_Delay(1000);
+		BSP_LCD_FillRect(xpos, ypos, barLength, height);
+		
+		HAL_Delay(250);
   }
 }
