@@ -22,6 +22,8 @@ gpio_pin_t pinPot = {PA_0, GPIOA, GPIO_PIN_0};
 gpio_pin_t ledHalf = {PB_8, GPIOB, GPIO_PIN_8};
 gpio_pin_t ledFull = {PB_9, GPIOB, GPIO_PIN_9};
 
+uint16_t prevAdcVal = 0;
+
 // LCD DEFINES
 
 // define a message boarder (note the lcd is 28 characters wide using Font24)
@@ -71,34 +73,39 @@ int main()
   while(1)
   {
     
-		uint16_t adc_val = read_adc(pinPot);
+		uint16_t adcVal = read_adc(pinPot);
 		
-		uint16_t xpos = 0;
-		uint16_t ypos = 240;
+		uint16_t xPos = 0;
+		uint16_t yPos = 240;
 		uint16_t height = 12;
 		uint16_t barLength;
 		
-		adc_val = adc_val / 4095.00 * 100;
+		adcVal = adcVal / 4095.00 * 100;
 		
-		barLength = adc_val * 480 / 100;
-		
+		barLength = adcVal * 480 / 100;
+		BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
+		BSP_LCD_FillRect(xPos, yPos, barLength, height);
+		BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+		BSP_LCD_FillRect(barLength, yPos, (480-barLength), height);
+		BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
+
 		char adc[12];
 		char half[16];
 		char full[16];
-		sprintf(adc, "ADC = %4d", adc_val);
+		sprintf(adc, "ADC = %4d", adcVal);
 		BSP_LCD_DisplayStringAtLine(5, (uint8_t *)adc);
 		
-		
-		if (adc_val < 50)
+		if (adcVal < 50)
 		{
 			write_gpio(ledHalf, HIGH);
 			write_gpio(ledFull, LOW);
 			sprintf(half, "LED 1 is high");
+	
 			sprintf(full, "LED 2 is low ");
 			BSP_LCD_DisplayStringAtLine(7, (uint8_t *)half);
 			BSP_LCD_DisplayStringAtLine(8, (uint8_t *)full);
 		}
-		else if (adc_val > 50)
+		else if (adcVal > 50)
 		{
 			write_gpio(ledFull, HIGH);
 			write_gpio(ledHalf, LOW);
@@ -107,7 +114,7 @@ int main()
 			BSP_LCD_DisplayStringAtLine(7, (uint8_t *)half);
 			BSP_LCD_DisplayStringAtLine(8, (uint8_t *)full);
 		}
-		else if (adc_val == 50)
+		else if (adcVal == 50)
 		{
 			write_gpio(ledHalf, HIGH);
 			write_gpio(ledFull, HIGH);
@@ -117,8 +124,6 @@ int main()
 			BSP_LCD_DisplayStringAtLine(8, (uint8_t *)full);
 		}
 		
-		BSP_LCD_FillRect(xpos, ypos, barLength, height);
-		
-		HAL_Delay(250);
+		HAL_Delay(100);
   }
 }
