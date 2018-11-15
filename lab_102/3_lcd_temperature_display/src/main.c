@@ -69,7 +69,7 @@ int main()
     
 		uint16_t adc_val = read_adc(pinTemp);
 		
-		adc_val = adc_val / 4095.00 * 100;
+		adc_val = (adc_val / 4096 * 100) * 5;
 		
 		char adc[12];
 		sprintf(adc, "ADC = %4d", adc_val);
